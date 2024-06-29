@@ -2,6 +2,9 @@
 
 use App\Models\Author;
 
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
+use function Pest\Laravel\deleteJson;
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\patchJson;
 use function Pest\Laravel\postJson;
@@ -14,10 +17,9 @@ describe('POST /authors', function () {
 
         postJson($route, $data)
             ->assertCreated()
-            ->assertJson([
-                'id' => 1,
-                ...$data,
-            ]);
+            ->assertJson($data);
+
+        assertDatabaseHas('authors', $data);
     });
 
     test('Cannot create author if firstname or lastname is not given', function () {
@@ -40,13 +42,17 @@ describe('PATCH|PUT /authors/{id}', function () {
             'lastname' => fake()->lastName(),
         ];
 
+        $expectedAuthor = [
+            'id' => $author->id,
+            'firstname' => $author->firstname,
+            'lastname' => $data['lastname'],
+        ];
+
         patchJson($route, $data)
             ->assertOk()
-            ->assertJson([
-                'id' => $author->id,
-                'firstname' => $author->firstname,
-                'lastname' => $data['lastname'],
-            ]);
+            ->assertJson($expectedAuthor);
+
+        assertDatabaseHas('authors', $expectedAuthor);
     });
 
     test('Can update an author\'s firstname', function () {
@@ -57,6 +63,12 @@ describe('PATCH|PUT /authors/{id}', function () {
             'firstname' => fake()->firstName(),
         ];
 
+        $expectedAuthor = [
+            'id' => $author->id,
+            'firstname' => $data['firstname'],
+            'lastname' => $author->lastname,
+        ];
+
         patchJson($route, $data)
             ->assertOk()
             ->assertJson([
@@ -64,6 +76,9 @@ describe('PATCH|PUT /authors/{id}', function () {
                 'firstname' => $data['firstname'],
                 'lastname' => $author->lastname,
             ]);
+
+        assertDatabaseHas('authors', $expectedAuthor);
+
     });
 });
 
@@ -119,6 +134,8 @@ describe('DELETE /authors/{id}', function () {
         $author = Author::factory()->create();
         $route = route('authors.destroy', ['author' => $author->id]);
 
-        getJson($route)->assertOk();
+        deleteJson($route)->assertOk()->dump();
+
+        assertDatabaseMissing('authors', ['id' => $author->id]);
     });
 });
