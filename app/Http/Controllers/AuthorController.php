@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreAuthorRequest;
+use App\Http\Requests\UpdateAuthorRequest;
 use App\Models\Author;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class AuthorController extends Controller
 {
@@ -41,9 +41,13 @@ class AuthorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Author $author)
+    public function update(UpdateAuthorRequest $request, Author $author): JsonResponse
     {
-        //
+        $data = $request->validated();
+
+        $author->update($data);
+
+        return response()->json($author->refresh(), JsonResponse::HTTP_OK);
     }
 
     /**
