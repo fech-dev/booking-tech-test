@@ -130,11 +130,11 @@ describe('GET /authors/{id}', function () {
 });
 
 describe('DELETE /authors/{id}', function () {
-    test('Can get an author', function () {
+    test('Can destroy an author', function () {
         $author = Author::factory()->create();
         $route = route('authors.destroy', ['author' => $author->id]);
 
-        deleteJson($route)->assertOk()->dump();
+        deleteJson($route)->assertOk();
 
         assertDatabaseMissing('authors', ['id' => $author->id]);
     });
