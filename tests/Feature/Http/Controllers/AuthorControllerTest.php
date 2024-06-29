@@ -2,6 +2,7 @@
 
 use App\Models\Author;
 
+use function Pest\Laravel\getJson;
 use function Pest\Laravel\patchJson;
 use function Pest\Laravel\postJson;
 
@@ -66,21 +67,49 @@ describe('PATCH|PUT /authors/{id}', function () {
     });
 });
 
-describe('POST /authors/{id}', function () {
-    test('Can update an author', function () {
+describe('GET /authors', function () {
+    beforeEach(function () {
+        Author::factory(20)->create();
+    });
+
+    test('Can get a paginated list of authors (first page)', function () {
+        $route = route('authors.index');
+
+        getJson($route)
+            ->assertOk()
+            ->assertJsonCount(15, 'data')
+            ->assertJsonPath('total', 20);
+    });
+
+    test('Can get a paginated list of authors (second page)', function () {
+        $route = route('authors.index', ['page' => 2]);
+
+        getJson($route)
+            ->assertOk()
+            ->assertJsonCount(5, 'data')
+            ->assertJsonPath('current_page', 2)
+            ->assertJsonPath('total', 20);
+    });
+});
+
+describe('GET /authors/{id}', function () {
+    test('Can get an author', function () {
         $author = Author::factory()->create();
-        $route = route('authors.update', ['author' => $author->id]);
+        $route = route('authors.show', ['author' => $author->id]);
 
-        $data = [
-            'lastname' => fake()->lastName(),
-        ];
-
-        patchJson($route, $data)
+        getJson($route)
             ->assertOk()
             ->assertJson([
                 'id' => $author->id,
                 'firstname' => $author->firstname,
-                'lastname' => $data['lastname'],
+                'lastname' => $author->lastname,
             ]);
+    });
+
+    test('Should respond with 404 error if author is not found', function () {
+        $route = route('authors.show', ['author' => 123434]);
+
+        getJson($route)
+            ->assertNotFound();
     });
 });

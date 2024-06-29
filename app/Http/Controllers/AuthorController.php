@@ -12,9 +12,11 @@ class AuthorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $authors = Author::paginate();
+
+        return response()->json($authors, JsonResponse::HTTP_OK);
     }
 
     /**
@@ -33,9 +35,9 @@ class AuthorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Author $author)
+    public function show(Author $author): JsonResponse
     {
-        //
+        return response()->json($author);
     }
 
     /**
