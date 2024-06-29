@@ -3,8 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\UnauthorizedException;
 use Symfony\Component\HttpFoundation\Response;
 
 class VerifyApiToken
@@ -19,7 +19,7 @@ class VerifyApiToken
         $hasValidApiKey = $request->header('Authorization') === config('app.api_key');
 
         if (! $hasValidApiKey) {
-            throw new UnauthorizedException();
+            return response()->json(['message' => 'Unauthorized'], JsonResponse::HTTP_UNAUTHORIZED);
         }
 
         return $next($request);
