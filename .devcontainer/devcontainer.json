@@ -11,9 +11,7 @@
             "extensions": [
                 "mikestead.dotenv",
                 "amiralizadeh9480.laravel-extra-intellisense",
-                // "ryannaddy.laravel-artisan",
                 "onecentlin.laravel5-snippets",
-                // "onecentlin.laravel-blade"
                 "neilbrayfield.php-docblocker",
                 "eamodio.gitlens",
                 "pgl.laravel-jump-controller",
@@ -22,7 +20,8 @@
                 "open-southeners.laravel-pint",
                 "DEVSENSE.phptools-vscode",
                 "cweijan.vscode-mysql-client2",
-                "tinkerun.tinkerun-vscode"
+                "tinkerun.tinkerun-vscode",
+                "rangav.vscode-thunder-client"
             ],
             "settings": {}
         }
