@@ -113,3 +113,12 @@ describe('GET /authors/{id}', function () {
             ->assertNotFound();
     });
 });
+
+describe('DELETE /authors/{id}', function () {
+    test('Can get an author', function () {
+        $author = Author::factory()->create();
+        $route = route('authors.destroy', ['author' => $author->id]);
+
+        getJson($route)->assertOk();
+    });
+});
