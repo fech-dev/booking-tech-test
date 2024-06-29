@@ -10,6 +10,12 @@ use function Pest\Laravel\getJson;
 use function Pest\Laravel\patchJson;
 use function Pest\Laravel\postJson;
 
+beforeEach(function () {
+    $this->withHeaders([
+        'Authorization' => config('app.api_key'),
+    ]);
+});
+
 describe('POST /books', function () {
     test('can create a book', function () {
         $author = Author::factory()->create();
